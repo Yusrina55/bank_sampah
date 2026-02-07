@@ -3,6 +3,7 @@ import '../../widgets/app_input.dart';
 import '../../widgets/app_button.dart';
 import '../../widgets/app_back_button.dart';
 import '../../widgets/app_kecamatan_dropdown.dart';
+import 'choose_schedule_screen.dart';
 import '../../theme.dart';
 
 class CreateSchedulePage extends StatefulWidget {
@@ -125,7 +126,7 @@ class _CreateSchedulePageState extends State<CreateSchedulePage> {
               const SizedBox(height: 16),
 
               // ================= FIELD KHUSUS MASYARAKAT =================
-              if (selectedJenis == "Masyarakat dan Usaha") ...[
+              if (selectedJenis == "Mahasiswa") ...[
                 AppInput(
                   label: "Tanggal",
                   hint: "dd-mm-yyyy",
@@ -144,7 +145,19 @@ class _CreateSchedulePageState extends State<CreateSchedulePage> {
                 text: selectedJenis == "Mahasiswa"
                     ? "Cari Jadwal"
                     : "Lanjut",
-                onPressed: () {},
+
+                onPressed: () {
+                  if (selectedJenis == "Mahasiswa") {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ChooseScheduleScreen(),
+                      ),
+                    );
+                  } else {
+                    // Navigasi lain kalau bukan mahasiswa
+                  }
+                },
               )
             ],
           ),
