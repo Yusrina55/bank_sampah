@@ -28,11 +28,14 @@ class AppInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final hasLabel = label.trim().isNotEmpty;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: medium12),
-        const SizedBox(height: 8),
+        if (hasLabel) ...[
+          Text(label, style: medium12),
+          const SizedBox(height: 8),
+        ],
         TextField(
           controller: controller,
           keyboardType: keyboardType,

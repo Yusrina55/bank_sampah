@@ -3,7 +3,8 @@ import '../../widgets/app_input.dart';
 import '../../widgets/app_button.dart';
 import '../../widgets/app_back_button.dart';
 import '../../widgets/app_kecamatan_dropdown.dart';
-import 'choose_schedule_screen.dart';
+import 'mahasiswa/choose_schedule_screen.dart';
+import 'warga/request_schedule.dart';
 import '../../theme.dart';
 
 class CreateSchedulePage extends StatefulWidget {
@@ -155,6 +156,12 @@ class _CreateSchedulePageState extends State<CreateSchedulePage> {
                       ),
                     );
                   } else {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const RequestSchedulePage(),
+                      ),
+                    );
                     // Navigasi lain kalau bukan mahasiswa
                   }
                 },

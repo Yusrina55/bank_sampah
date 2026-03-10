@@ -127,7 +127,14 @@ final TextEditingController kecamatanController =
                           // Button Masuk
                           AppButton(
                             text: 'Daftar', 
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const LoginScreen(),
+                                ),
+                              );
+                            },
                           ),
 
                           const SizedBox(height: 16),

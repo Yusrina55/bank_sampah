@@ -4,11 +4,13 @@ import '../widgets/app_input.dart';
 class AppJenisSampahDropdown extends StatefulWidget {
   final TextEditingController controller;
   final String label;
+  final bool readOnly;
 
   const AppJenisSampahDropdown({
     super.key,
     required this.controller,
     required this.label,
+    this.readOnly = false,
   });
 
   @override
@@ -38,41 +40,48 @@ class _AppJenisSampahDropdownState
       hint: 'Pilih jenis sampah',
       controller: widget.controller,
       readOnly: true,
-      suffixIcon: const Icon(Icons.keyboard_arrow_down),
-      onTap: () async {
 
-        final RenderBox renderBox =
-            _dropdownKey.currentContext!.findRenderObject()
-                as RenderBox;
+      // icon hanya muncul kalau bisa edit
+      suffixIcon: widget.readOnly
+          ? null
+          : const Icon(Icons.keyboard_arrow_down),
 
-        final Offset offset =
-            renderBox.localToGlobal(Offset.zero);
+      // kalau readonly → tidak bisa tap
+      onTap: widget.readOnly
+          ? null
+          : () async {
+              final RenderBox renderBox =
+                  _dropdownKey.currentContext!.findRenderObject()
+                      as RenderBox;
 
-        final double screenWidth =
-            MediaQuery.of(context).size.width;
+              final Offset offset =
+                  renderBox.localToGlobal(Offset.zero);
 
-        final selected = await showMenu<String>(
-          context: context,
-          position: RelativeRect.fromLTRB(
-            offset.dx,
-            offset.dy + renderBox.size.height,
-            screenWidth - (offset.dx + renderBox.size.width),
-            0,
-          ),
-          items: jenisSampahList.map((jenis) {
-            return PopupMenuItem<String>(
-              value: jenis,
-              child: SizedBox(
-                width: renderBox.size.width,
-                child: Text(jenis),
-              ),
-            );
-          }).toList(),
-        );
+              final double screenWidth =
+                  MediaQuery.of(context).size.width;
 
-        if (selected != null) {
-          widget.controller.text = selected;
-        }
+              final selected = await showMenu<String>(
+                context: context,
+                position: RelativeRect.fromLTRB(
+                  offset.dx,
+                  offset.dy + renderBox.size.height,
+                  screenWidth - (offset.dx + renderBox.size.width),
+                  0,
+                ),
+                items: jenisSampahList.map((jenis) {
+                  return PopupMenuItem<String>(
+                    value: jenis,
+                    child: SizedBox(
+                      width: renderBox.size.width,
+                      child: Text(jenis),
+                    ),
+                  );
+                }).toList(),
+              );
+
+              if (selected != null) {
+                widget.controller.text = selected;
+              }
       },
     );
   }

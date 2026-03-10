@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import '../../theme.dart';
-import '../../widgets/app_button.dart';
-import '../../widgets/app_back_button.dart';
-import '../../widgets/app_jenis_sampah_dropdown.dart';
-import 'home_page_pelanggan.dart';
+import '../../../theme.dart';
+import '../../../widgets/app_button.dart';
+import '../../../widgets/app_back_button.dart';
+import '../../../widgets/app_jenis_sampah_dropdown.dart';
+import '../../../widgets/app_schedule_field.dart';
+import '../home_page_pelanggan.dart';
 
 class ChooseScheduleScreen extends StatefulWidget {
   const ChooseScheduleScreen({super.key});
@@ -14,9 +15,9 @@ class ChooseScheduleScreen extends StatefulWidget {
 }
 
 class _ChooseScheduleScreenState extends State<ChooseScheduleScreen> {
+  final TextEditingController scheduleC = TextEditingController();
 
   /// RADIO SCHEDULE
-  String? selectedSchedule;
 
   final List<String> scheduleList = [
     "08.00 - 10.00",
@@ -52,14 +53,19 @@ class _ChooseScheduleScreenState extends State<ChooseScheduleScreen> {
 
   /// VALIDASI FORM
   bool isFormValid() {
-    if (selectedSchedule == null) return false;
+    if (scheduleC.text.isEmpty) {
+      return false;
+    }
 
     for (var controller in jenisSampahControllers) {
-      if (controller.text.trim().isEmpty) return false;
+      if (controller.text.isEmpty) {
+        return false;
+      }
     }
 
     return true;
   }
+  
 
   /// SUCCESS NOTIFICATION (TOP BANNER)
   void _showSuccessDialog() {
@@ -135,8 +141,8 @@ class _ChooseScheduleScreenState extends State<ChooseScheduleScreen> {
 
         body: Padding(
           padding: const EdgeInsets.all(24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: ListView(
+            physics: const BouncingScrollPhysics(),
             children: [
 
               /// ========================
@@ -145,26 +151,10 @@ class _ChooseScheduleScreenState extends State<ChooseScheduleScreen> {
               Text("Pilihan Jadwal", style: semiBold14),
               const SizedBox(height: 16),
 
-              ...scheduleList.map((schedule) {
-                return Container(
-                  margin: const EdgeInsets.only(bottom: 6),
-                  decoration: BoxDecoration(
-                    border:
-                        Border.all(color: Colors.grey.shade300),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: RadioListTile<String>(
-                    value: schedule,
-                    groupValue: selectedSchedule,
-                    title: Text(schedule),
-                    onChanged: (value) {
-                      setState(() {
-                        selectedSchedule = value;
-                      });
-                    },
-                  ),
-                );
-              }).toList(),
+              AppScheduleField(
+                controller: scheduleC,
+                scheduleList: scheduleList,
+              ),
 
               const SizedBox(height: 24),
 
@@ -241,15 +231,25 @@ class _ChooseScheduleScreenState extends State<ChooseScheduleScreen> {
                 ),
               ),
 
-              const Spacer(),
+              const SizedBox(height: 32),
 
               /// ========================
               /// BUTTON BUAT
               /// ========================
               AppButton(
                 text: "Buat",
-                onPressed:
-                    isFormValid() ? _showSuccessDialog : null,
+                onPressed: () {
+                  if (!isFormValid()) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Semua field harus diisi"),
+                      ),
+                    );
+                    return;
+                  }
+
+                  _showSuccessDialog();
+                },
               ),
             ],
           ),

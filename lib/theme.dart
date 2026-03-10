@@ -26,6 +26,9 @@ TextStyle regular14 = regular12.copyWith(
 TextStyle regular16 = regular12.copyWith(
   fontSize: 16,
 );
+TextStyle regular10 = regular12.copyWith(
+  fontSize: 10,
+);
 
 TextStyle medium12 = regular12.copyWith(
   fontSize: 12,

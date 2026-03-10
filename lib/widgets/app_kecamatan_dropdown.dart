@@ -3,10 +3,12 @@ import '../widgets/app_input.dart';
 
 class AppKecamatanDropdown extends StatefulWidget {
   final TextEditingController controller;
+  final bool readOnly;
 
   const AppKecamatanDropdown({
     super.key,
     required this.controller,
+    this.readOnly = false,
   });
 
   @override
@@ -15,7 +17,7 @@ class AppKecamatanDropdown extends StatefulWidget {
 }
 
 class _AppKecamatanDropdownState extends State<AppKecamatanDropdown> {
-  final GlobalKey _kecamatanKey = GlobalKey();
+
 
   String? selectedKecamatan;
 
@@ -30,15 +32,18 @@ class _AppKecamatanDropdownState extends State<AppKecamatanDropdown> {
   @override
   Widget build(BuildContext context) {
     return AppInput(
-      key: _kecamatanKey,
       label: 'Kecamatan',
       hint: 'Pilih kecamatan',
       controller: widget.controller,
       readOnly: true,
-      suffixIcon: const Icon(Icons.keyboard_arrow_down),
-      onTap: () async {
+      suffixIcon: widget.readOnly
+        ? null
+        : const Icon(Icons.keyboard_arrow_down),
+      onTap: widget.readOnly
+    ? null
+    : () async {
         final RenderBox renderBox =
-            _kecamatanKey.currentContext!.findRenderObject() as RenderBox;
+            context.findRenderObject() as RenderBox;
 
         final Offset offset = renderBox.localToGlobal(Offset.zero);
         final double screenWidth = MediaQuery.of(context).size.width;
