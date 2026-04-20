@@ -13,6 +13,7 @@ class SampahItem {
 class ScheduleModel {
   final String name;
   final String kecamatan;
+  final String alamat; // tambah field alamat
   final String tanggal;
   final String jadwal;
   final String status;
@@ -23,6 +24,7 @@ class ScheduleModel {
   const ScheduleModel({
     required this.name,
     required this.kecamatan,
+    this.alamat = '',
     required this.tanggal,
     required this.jadwal,
     required this.status,
@@ -31,5 +33,3 @@ class ScheduleModel {
     this.sampahList = const [],
   });
 }
-
-

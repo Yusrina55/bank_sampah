@@ -7,6 +7,7 @@ import '../../../widgets/app_kecamatan_dropdown.dart';
 import '../../../widgets/app_schedule_field.dart';
 import '../../../theme.dart';
 import '../../../models/schedule_model.dart';
+import '../../../widgets/cancel_bottom_sheet.dart';
 
 enum DetailMode { view, edit }
 
@@ -35,6 +36,7 @@ class _DetailScheduleMahasiswaPageState
 
   late TextEditingController namaC;
   late TextEditingController kecamatanC;
+  late TextEditingController alamatC;
   late TextEditingController tanggalC;
   late TextEditingController jadwalC;
   late TextEditingController statusC;
@@ -55,6 +57,7 @@ class _DetailScheduleMahasiswaPageState
 
     namaC = TextEditingController(text: widget.schedule.name);
     kecamatanC = TextEditingController(text: widget.schedule.kecamatan);
+    alamatC = TextEditingController(text: widget.schedule.alamat);
     tanggalC = TextEditingController(text: widget.schedule.tanggal);
     jadwalC = TextEditingController(text: widget.schedule.jadwal);
     statusC = TextEditingController(text: widget.schedule.status);
@@ -68,6 +71,28 @@ class _DetailScheduleMahasiswaPageState
 
   bool get isReadOnly =>
       widget.isHistory || mode == DetailMode.view;
+  
+  /// ===== BOTTOM SHEET CANCEL =====
+  void _showCancelBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return CancelBottomSheet(
+          onCancel: () {
+            Navigator.pop(context); // tutup modal
+          },
+          onConfirm: () {
+            Navigator.pop(context); // tutup modal
+            widget.onBack(); // balik ke homepage
+          },
+        );
+      },
+    );
+  }
+
 
   Future<void> _pickDate() async {
     final DateTime? picked = await showDatePicker(
@@ -129,6 +154,15 @@ class _DetailScheduleMahasiswaPageState
 
                     AppKecamatanDropdown(
                       controller: kecamatanC,
+                      readOnly: isReadOnly,
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    AppInput(
+                      label: "Alamat",
+                      hint: "",
+                      controller: alamatC,
                       readOnly: isReadOnly,
                     ),
 
@@ -203,9 +237,19 @@ class _DetailScheduleMahasiswaPageState
                     ),
                   ],
                 )
+
+               /// ✅ VIEW MODE (SUDAH ADA BATALKAN)
               else if (mode == DetailMode.view)
                 Row(
                   children: [
+                    Expanded(
+                      child: AppButton(
+                        text: "Batalkan",
+                        isOutlined: true,
+                        onPressed: _showCancelBottomSheet,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
                     Expanded(
                       child: AppButton(
                         text: "Ubah",
@@ -218,6 +262,7 @@ class _DetailScheduleMahasiswaPageState
                     ),
                   ],
                 )
+                
               else
                 Row(
                   children: [

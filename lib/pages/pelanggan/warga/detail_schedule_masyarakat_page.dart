@@ -5,6 +5,7 @@ import '../../../widgets/app_back_button.dart';
 import '../../../widgets/app_kecamatan_dropdown.dart';
 import '../../../widgets/app_berat_jenis.dart';
 import '../../../models/schedule_model.dart';
+import '../../../widgets/cancel_bottom_sheet.dart';
 import '../../../theme.dart';
 
 enum DetailMode { view, edit }
@@ -33,6 +34,7 @@ class _DetailScheduleMasyarakatPageState
 
   late TextEditingController namaC;
   late TextEditingController kecamatanC;
+  late TextEditingController alamatC;
   late TextEditingController tanggalC;
   late TextEditingController jadwalC;
   late TextEditingController statusC;
@@ -65,6 +67,26 @@ class _DetailScheduleMasyarakatPageState
     }
   }
 
+  void _showCancelBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return CancelBottomSheet(
+          onCancel: () {
+            Navigator.pop(context); // tutup modal
+          },
+          onConfirm: () {
+            Navigator.pop(context); // tutup modal dulu
+
+            widget.onBack(); // balik ke homepage
+          },
+        );
+      },
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -74,6 +96,7 @@ class _DetailScheduleMasyarakatPageState
     namaC = TextEditingController(text: widget.schedule.name);
     kecamatanC =
         TextEditingController(text: widget.schedule.kecamatan);
+    alamatC = TextEditingController(text: widget.schedule.alamat);
     tanggalC =
         TextEditingController(text: widget.schedule.tanggal);
     jadwalC =
@@ -159,6 +182,14 @@ class _DetailScheduleMasyarakatPageState
     if (mode == DetailMode.view) {
       return Row(
         children: [
+          Expanded(
+            child: AppButton(
+              text: "Batalkan",
+              isOutlined: true,
+              onPressed: _showCancelBottomSheet,
+            ),
+          ),
+          const SizedBox(width: 16),
           Expanded(
             child: AppButton(
               text: "Ubah",
@@ -251,11 +282,22 @@ class _DetailScheduleMasyarakatPageState
 
                       /// KECAMATAN
                       AppKecamatanDropdown(
-                      controller: kecamatanC,
-                      readOnly: isReadOnly,
-                    ),
+                        controller: kecamatanC,
+                        readOnly: isReadOnly,
+                      ),
 
                       const SizedBox(height: 16),
+
+                      // ✅ TAMBAHKAN INI
+                      AppInput(
+                          label: "Alamat",
+                          hint: "",
+                          controller: alamatC,
+                          readOnly: isReadOnly,
+                        ),
+
+                      const SizedBox(height: 16),
+
 
                       /// TANGGAL
                       AppInput(
