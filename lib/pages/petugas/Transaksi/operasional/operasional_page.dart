@@ -4,6 +4,7 @@ import '../../../../widgets/app_back_button.dart';
 import '../../../../widgets/app_search.dart';
 import '../../../../widgets/app_button.dart';
 import '../../../../widgets/operational_card.dart';
+import 'package:bank_sampah/data/transaksi_repository.dart'; // ✅ tambah
 import 'create_operasional.dart';
 import 'detail_operasional.dart';
 
@@ -17,34 +18,40 @@ class OperasionalPage extends StatefulWidget {
 class _OperasionalPageState extends State<OperasionalPage> {
   final TextEditingController searchDateController = TextEditingController();
 
+  // ✅ Data dari repository, bukan hardcode
+  List<Map<String, dynamic>> filteredData = [];
+
+  @override
+  void initState() {
+    super.initState();
+    filteredData = TransaksiRepository.operasional;
+  }
+
   @override
   void dispose() {
     searchDateController.dispose();
     super.dispose();
   }
 
-  static final List<Map<String, String>> dummyData = [
-    {
-      "date": "20/12/2025",
-      "note": "Service tossa",
-      "amount": "250.000",
-    },
-    {
-      "date": "19/12/2025",
-      "note": "Beli karung",
-      "amount": "30.000",
-    },
-    {
-      "date": "19/12/2025",
-      "note": "Beli karung",
-      "amount": "30.000",
-    },
-    {
-      "date": "19/12/2025",
-      "note": "Beli karung",
-      "amount": "30.000",
-    },
-  ];
+  // ✅ Filter berdasarkan tanggal yang dipilih
+  void _onDateSelected(DateTime? date) {
+    if (date == null) {
+      setState(() {
+        filteredData = TransaksiRepository.operasional;
+      });
+      return;
+    }
+
+    // Format date jadi "dd/MM/yyyy" untuk dicocokkan dengan data
+    final formatted =
+        "${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}";
+
+    setState(() {
+      filteredData = TransaksiRepository.operasional
+          .where((item) => item['date'] == formatted)
+          .toList();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,14 +75,12 @@ class _OperasionalPageState extends State<OperasionalPage> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-
           /// SEARCH
           AppDatePickerField(
             controller: searchDateController,
             enabled: true,
-            onDateSelected: (date) {},
+            onDateSelected: _onDateSelected, // ✅ filter saat tanggal dipilih
           ),
-
           const SizedBox(height: 16),
 
           /// HEADER ROW
@@ -99,34 +104,48 @@ class _OperasionalPageState extends State<OperasionalPage> {
                     );
                   },
                 ),
-              )
+              ),
             ],
           ),
-
           const SizedBox(height: 16),
 
           /// LIST CARD
-          ...dummyData.map(
-            (item) => GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => DetailOperasionalPage(
-                      tanggal: item["date"]!,
-                      operasional: item["note"]!,
-                      harga: item["amount"]!,
+          if (filteredData.isEmpty)
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 24),
+                child: Text(
+                  "Tidak ada data operasional",
+                  style: regular12.copyWith(color: Colors.grey),
+                ),
+              ),
+            )
+          else
+            ...filteredData.map(
+              (item) => GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => DetailOperasionalPage(
+                        tanggal: item["date"] as String,
+                        operasional: item["note"] as String,
+                        harga: TransaksiRepository.formatRupiah(
+                          item["amount"] as num,
+                        ), 
+                      ),
                     ),
-                  ),
-                );
-              },
-              child: OperationalCard(
-                date: item["date"]!,
-                note: item["note"]!,
-                amount: item["amount"]!,
+                  );
+                },
+                child: OperationalCard(
+                  date: item["date"] as String,
+                  note: item["note"] as String,
+                  amount: TransaksiRepository.formatRupiah(
+                    item["amount"] as num,
+                  ), 
+                ),
               ),
             ),
-          ),
         ],
       ),
     );

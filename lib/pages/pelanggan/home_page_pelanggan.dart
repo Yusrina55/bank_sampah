@@ -31,10 +31,23 @@ class _HomePagePelangganState extends State<HomePagePelanggan> {
       alamat: "Jl. Mawar No.5, Sumbersari",
       tanggal: "21/12/2025",
       jadwal: "11.00",
-      status: "Diproses",
+      status: "Menunggu Persetujuan",
       customerType: CustomerType.masyarakat,
       sampahList: [
-        SampahItem(jenis: "Plastik", berat: "2 kg"),
+        SampahItem(jenis: "Plastik", berat: "10 kg"),
+      ],
+    ),
+    ScheduleModel(
+      name: "Sari",
+      kecamatan: "Sumbersari",
+      alamat: "Jl. Mawar No.5, Sumbersari",
+      tanggal: "21/12/2025",
+      jadwal: "11.00",
+      status: "Ditolak",
+      alasanTolak: "sedang sakit",
+      customerType: CustomerType.masyarakat,
+      sampahList: [
+        SampahItem(jenis: "Plastik", berat: "12 kg"),
       ],
     ),
   ];

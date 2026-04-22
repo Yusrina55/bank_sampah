@@ -12,7 +12,8 @@ class RequestedSchedulePage extends StatelessWidget {
     final List<ScheduleModel> dummyRequests = [
       ScheduleModel(
         name: "Budi",
-        kecamatan: "Kecamatan Sleman",
+        kecamatan: "Tegalgede",
+        alamat: "Perum Kaliurang N11",
         tanggal: "22/12/2025",
         jadwal: "10.00",
         status: "Menunggu Persetujuan",
@@ -24,7 +25,8 @@ class RequestedSchedulePage extends StatelessWidget {
       ),
       ScheduleModel(
         name: "Sari",
-        kecamatan: "Kecamatan Depok",
+        kecamatan: "Ambulu",
+        alamat: "Jl. Raya Ambulu No. 45",
         tanggal: "23/12/2025",
         jadwal: "14.00",
         status: "Menunggu Persetujuan",
@@ -52,7 +54,7 @@ class RequestedSchedulePage extends StatelessWidget {
             time: schedule.jadwal,
             date: schedule.tanggal,
             name: schedule.name,
-            location: schedule.kecamatan,
+            location: '${schedule.kecamatan}, ${schedule.alamat}',
             onTap: () {
               Navigator.push(
                 context,

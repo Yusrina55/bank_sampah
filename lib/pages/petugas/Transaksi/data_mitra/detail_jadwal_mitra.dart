@@ -7,11 +7,10 @@ import '../../../../../widgets/app_dropdown.dart';
 import '../../../../../widgets/app_search.dart';
 import '../../../../../widgets/delete_bottom_sheet.dart';
 
-/// Mode untuk menentukan tampilan dan behavior page
 enum JadwalDetailMode {
-  jadwalMitra,   // semua readonly kecuali harga, ada tombol Bayar
-  ajuanJadwal,   // view/edit mode, tombol Batalkan + Ubah/Simpan
-  riwayat,       // semua readonly, tidak ada tombol
+  jadwalMitra,
+  ajuanJadwal,
+  riwayat,
 }
 
 class DetailJadwalMitraPage extends StatefulWidget {
@@ -20,8 +19,10 @@ class DetailJadwalMitraPage extends StatefulWidget {
   final String namaMitra;
   final String berat;
   final String jadwalAmbil;
+  final String time;
   final String status;
-  final String? harga; // hanya untuk jadwalMitra & riwayat
+  final String? alasanTolak;
+  final String? harga;
 
   const DetailJadwalMitraPage({
     super.key,
@@ -30,7 +31,9 @@ class DetailJadwalMitraPage extends StatefulWidget {
     required this.namaMitra,
     required this.berat,
     required this.jadwalAmbil,
+    required this.time,
     required this.status,
+    this.alasanTolak,
     this.harga,
   });
 
@@ -45,7 +48,9 @@ class _DetailJadwalMitraPageState extends State<DetailJadwalMitraPage> {
   late TextEditingController _namaMitraController;
   late TextEditingController _beratController;
   late TextEditingController _jadwalController;
+  late TextEditingController _timeController;
   late TextEditingController _statusController;
+  late TextEditingController _alasanTolakController;
   late TextEditingController _hargaController;
 
   static const List<String> _jenisSampahList = [
@@ -58,19 +63,26 @@ class _DetailJadwalMitraPageState extends State<DetailJadwalMitraPage> {
   ];
 
   static const List<String> _statusList = [
-    'Diproses', 'Setuju', 'Selesai', 'Ditolak',
+    'Menunggu Persetujuan', 'Setuju', 'Selesai', 'Ditolak',
   ];
+
+  // ✅ cek ditolak dari widget.status
+  bool get _isDitolak =>
+      widget.status == "Ditolak" ||
+      (widget.alasanTolak != null && widget.alasanTolak!.isNotEmpty);
 
   @override
   void initState() {
     super.initState();
-    _isEditing = false; // default selalu view mode
+    _isEditing = false;
     _jenisSampahController = TextEditingController(text: widget.jenisSampah);
     _namaMitraController = TextEditingController(text: widget.namaMitra);
     _beratController = TextEditingController(text: widget.berat);
     _jadwalController = TextEditingController(text: widget.jadwalAmbil);
+    _timeController = TextEditingController(text: widget.time);
     _statusController = TextEditingController(text: widget.status);
-    _hargaController = TextEditingController();
+    _alasanTolakController = TextEditingController(text: widget.alasanTolak ?? "");
+    _hargaController = TextEditingController(text: widget.harga ?? "");
   }
 
   @override
@@ -79,7 +91,9 @@ class _DetailJadwalMitraPageState extends State<DetailJadwalMitraPage> {
     _namaMitraController.dispose();
     _beratController.dispose();
     _jadwalController.dispose();
+    _timeController.dispose();
     _statusController.dispose();
+    _alasanTolakController.dispose();
     _hargaController.dispose();
     super.dispose();
   }
@@ -95,14 +109,12 @@ class _DetailJadwalMitraPageState extends State<DetailJadwalMitraPage> {
     }
   }
 
-  /// Apakah field bisa diedit
   bool get _isFieldEditable {
     if (widget.mode == JadwalDetailMode.ajuanJadwal) return _isEditing;
-    return false; // jadwalMitra & riwayat selalu readonly
+    return false;
   }
 
   void _onUbah() => setState(() => _isEditing = true);
-
   void _onSimpan() => setState(() => _isEditing = false);
 
   void _onBatalkan() {
@@ -113,10 +125,10 @@ class _DetailJadwalMitraPageState extends State<DetailJadwalMitraPage> {
         title: 'Yakin membatalkan ajuan jadwal mitra?',
         cancelText: 'Kembali',
         confirmText: 'Batalkan',
-        onCancel: () => Navigator.pop(context), // tutup bottom sheet
+        onCancel: () => Navigator.pop(context),
         onConfirm: () {
-          Navigator.pop(context); // tutup bottom sheet
-          Navigator.pop(context); // kembali ke mitra page
+          Navigator.pop(context);
+          Navigator.pop(context);
         },
       ),
     );
@@ -129,9 +141,48 @@ class _DetailJadwalMitraPageState extends State<DetailJadwalMitraPage> {
       );
       return;
     }
-    // TODO: proses pembayaran
     Navigator.pop(context);
   }
+
+  // ================= BOTTOM BUTTON =================
+
+  Widget _buildBottomButton() {
+    /// Jadwal Mitra: tombol Bayar
+    if (widget.mode == JadwalDetailMode.jadwalMitra) {
+      return AppButton(
+        text: 'Bayar',
+        onPressed: _onBayar,
+      );
+    }
+
+    /// Ajuan Jadwal: sembunyikan jika ditolak ✅
+    if (widget.mode == JadwalDetailMode.ajuanJadwal) {
+      if (_isDitolak) return const SizedBox.shrink();
+      return Row(
+        children: [
+          Expanded(
+            child: AppButton(
+              text: 'Batalkan',
+              isOutlined: true,
+              onPressed: _onBatalkan,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: AppButton(
+              text: _isEditing ? 'Simpan' : 'Ubah',
+              onPressed: _isEditing ? _onSimpan : _onUbah,
+            ),
+          ),
+        ],
+      );
+    }
+
+    /// Riwayat: tidak ada tombol
+    return const SizedBox.shrink();
+  }
+
+  // ================= UI =================
 
   @override
   Widget build(BuildContext context) {
@@ -155,6 +206,7 @@ class _DetailJadwalMitraPageState extends State<DetailJadwalMitraPage> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+
           /// JENIS SAMPAH
           AppDropdown(
             controller: _jenisSampahController,
@@ -175,23 +227,32 @@ class _DetailJadwalMitraPageState extends State<DetailJadwalMitraPage> {
           ),
           const SizedBox(height: 16),
 
-          /// BERAT / JUMLAH
-          AppInput(
-            label: 'Berat/Jumlah',
-            hint: 'masukkan berat',
-            controller: _beratController,
-            readOnly: !_isFieldEditable,
-            keyboardType: TextInputType.number,
-          ),
-          const SizedBox(height: 16),
-
-          /// JADWAL AMBIL
+          /// TANGGAL
           Text('Tanggal', style: medium12),
           const SizedBox(height: 8),
           AppDatePickerField(
             controller: _jadwalController,
             enabled: _isFieldEditable,
             onDateSelected: (date) {},
+          ),
+          const SizedBox(height: 16),
+
+          /// JAM
+          AppInput(
+            label: 'Jam',
+            hint: 'masukkan jam',
+            controller: _timeController,
+            readOnly: true, // atau false kalau mau editable
+          ),
+          const SizedBox(height: 16),
+
+          /// BERAT / JUMLAH
+          AppInput(
+            label: 'Berat Sampah',
+            hint: 'masukkan berat',
+            controller: _beratController,
+            readOnly: !_isFieldEditable,
+            keyboardType: TextInputType.number,
           ),
           const SizedBox(height: 16),
 
@@ -203,53 +264,37 @@ class _DetailJadwalMitraPageState extends State<DetailJadwalMitraPage> {
             items: _statusList,
             readOnly: true,
           ),
-          const SizedBox(height: 16),
 
-          /// HARGA — hanya tampil di jadwalMitra & riwayat
+          // ✅ ALASAN PENOLAKAN — tampil jika ditolak
+          if (_isDitolak) ...[
+            const SizedBox(height: 16),
+            AppInput(
+              label: 'Alasan Penolakan',
+              hint: '',
+              controller: _alasanTolakController,
+              readOnly: true,
+            ),
+          ],
+
+          /// HARGA — hanya untuk jadwalMitra & riwayat
           if (widget.mode == JadwalDetailMode.jadwalMitra ||
               widget.mode == JadwalDetailMode.riwayat) ...[
+            const SizedBox(height: 16),
             AppInput(
               label: 'Harga',
               hint: 'masukkan harga',
               controller: _hargaController,
-              // jadwalMitra: harga editable; riwayat: readonly
               readOnly: widget.mode == JadwalDetailMode.riwayat,
               keyboardType: TextInputType.number,
             ),
-            const SizedBox(height: 32),
           ],
 
-          /// ===== BUTTONS =====
+          const SizedBox(height: 32),
 
-          /// Gambar 2 — Jadwal Mitra: tombol Bayar
-          if (widget.mode == JadwalDetailMode.jadwalMitra)
-            AppButton(
-              text: 'Bayar',
-              onPressed: _onBayar,
-            ),
+          /// BUTTONS
+          _buildBottomButton(),
 
-          /// Gambar 1 — Ajuan Jadwal: Batalkan + Ubah/Simpan
-          if (widget.mode == JadwalDetailMode.ajuanJadwal)
-            Row(
-              children: [
-                Expanded(
-                  child: AppButton(
-                    text: 'Batalkan',
-                    isOutlined: true,
-                    onPressed: _onBatalkan,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: AppButton(
-                    text: _isEditing ? 'Simpan' : 'Ubah',
-                    onPressed: _isEditing ? _onSimpan : _onUbah,
-                  ),
-                ),
-              ],
-            ),
-
-          /// Gambar 3 — Riwayat: tidak ada tombol
+          const SizedBox(height: 16),
         ],
       ),
     );

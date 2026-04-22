@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../../../../theme.dart';
 import '../../../../widgets/app_back_button.dart';
 import '../../../../widgets/recap_card.dart';
+import 'package:bank_sampah/data/transaksi_repository.dart';
+import 'detail_recap_page.dart';
 
 class RekapitulasiPage extends StatefulWidget {
   const RekapitulasiPage({super.key});
@@ -21,30 +23,19 @@ class _RekapitulasiPageState extends State<RekapitulasiPage> {
     'September', 'Oktober', 'November', 'Desember',
   ];
 
-  static final List<Map<String, String>> dummyRekap = [
-    {'periode': '2025, Desember', 'total': '700.000,00'},
-    {'periode': '2025, November', 'total': '500.000,00'},
-    {'periode': '2025, Oktober', 'total': '400.000,00'},
-    {'periode': '2025, September', 'total': '300.000,00'},
-    {'periode': '2025, Agustus', 'total': '400.000,00'},
-  ];
-
   List<Map<String, String>> filteredRekap = [];
 
   @override
   void initState() {
     super.initState();
-    filteredRekap = dummyRekap;
+    filteredRekap = TransaksiRepository.semuaRekap;
   }
 
   void _onCari() {
     setState(() {
-      filteredRekap = dummyRekap.where((item) {
-        final periode = item['periode']!.toLowerCase();
-        final matchTahun = selectedTahun == null ||
-            periode.contains(selectedTahun!.toLowerCase());
-        final matchBulan = selectedBulan == null ||
-            periode.contains(selectedBulan!.toLowerCase());
+      filteredRekap = TransaksiRepository.semuaRekap.where((item) {
+        final matchTahun = selectedTahun == null || item['tahun'] == selectedTahun;
+        final matchBulan = selectedBulan == null || item['bulan'] == selectedBulan;
         return matchTahun && matchBulan;
       }).toList();
     });
@@ -75,7 +66,6 @@ class _RekapitulasiPageState extends State<RekapitulasiPage> {
           /// ===== FILTER ROW =====
           Row(
             children: [
-              /// TAHUN DROPDOWN
               Expanded(
                 child: _DropdownInput(
                   hint: 'tahun',
@@ -85,8 +75,6 @@ class _RekapitulasiPageState extends State<RekapitulasiPage> {
                 ),
               ),
               const SizedBox(width: 10),
-
-              /// BULAN DROPDOWN
               Expanded(
                 child: _DropdownInput(
                   hint: 'bulan',
@@ -96,8 +84,6 @@ class _RekapitulasiPageState extends State<RekapitulasiPage> {
                 ),
               ),
               const SizedBox(width: 10),
-
-              /// CARI BUTTON
               SizedBox(
                 width: 48,
                 height: 48,
@@ -130,7 +116,15 @@ class _RekapitulasiPageState extends State<RekapitulasiPage> {
                 periode: item['periode']!,
                 total: item['total']!,
                 onTap: () {
-                  // TODO: navigate to detail rekapitulasi
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => DetailRekapitulasiPage(
+                        bulan: item['bulan']!,
+                        tahun: item['tahun']!,
+                      ),
+                    ),
+                  );
                 },
               ),
             ),

@@ -3,36 +3,48 @@ import '../../../../theme.dart';
 import '../../../../widgets/app_back_button.dart';
 import '../../../../widgets/recap_tab.dart';
 import '../../../../widgets/recap_detail_card.dart';
+import 'package:bank_sampah/data/transaksi_repository.dart';
 
 class DetailRekapitulasiPage extends StatefulWidget {
-  const DetailRekapitulasiPage({super.key});
+  final String bulan;
+  final String tahun;
+
+  const DetailRekapitulasiPage({
+    super.key,
+    required this.bulan,
+    required this.tahun,
+  });
 
   @override
   State<DetailRekapitulasiPage> createState() => _DetailRekapitulasiPageState();
 }
 
 class _DetailRekapitulasiPageState extends State<DetailRekapitulasiPage> {
-  int _selectedTab = 0; // 0 = Uang Masuk, 1 = Uang Keluar
+  int _selectedTab = 0;
 
-  static final List<Map<String, String>> dummyUangMasuk = [
-    {'date': '27/12/2025', 'name': 'Pabrik Kertas A', 'amount': '100.000'},
-    {'date': '20/12/2025', 'name': 'Pabrik Plastik A', 'amount': '200.000'},
-    {'date': '16/12/2025', 'name': 'Pabrik Besi A', 'amount': '150.000'},
-    {'date': '8/12/2025', 'name': 'Pabrik Elektronik A', 'amount': '250.000'},
-  ];
+  List<Map<String, dynamic>> get _uangMasuk =>
+      TransaksiRepository.uangMasuk
+          .where((e) => e['bulan'] == widget.bulan && e['tahun'] == widget.tahun)
+          .toList();
 
-  static final List<Map<String, String>> dummyUangKeluar = [
-    {'date': '27/12/2025', 'name': 'Pelanggan', 'amount': '30.000'},
-    {'date': '27/12/2025', 'name': 'Pelanggan', 'amount': '30.000'},
-    {'date': '27/12/2025', 'name': 'Pelanggan', 'amount': '20.000'},
-    {'date': '25/12/2025', 'name': 'Warga dan Usaha', 'amount': '100.000'},
-    {'date': '25/12/2025', 'name': 'Warga dan Usaha', 'amount': '100.000'},
-    {'date': '25/12/2025', 'name': 'Warga dan Usaha', 'amount': '100.000'},
-    {'date': '25/12/2025', 'name': 'Operasional', 'amount': '150.000'},
-  ];
+  List<Map<String, dynamic>> get _uangKeluar =>
+      TransaksiRepository.uangKeluar
+          .where((e) => e['bulan'] == widget.bulan && e['tahun'] == widget.tahun)
+          .toList();
 
-  List<Map<String, String>> get _currentList =>
-      _selectedTab == 0 ? dummyUangMasuk : dummyUangKeluar;
+  List<Map<String, dynamic>> get _operasional =>
+      TransaksiRepository.operasional
+          .where((e) => e['bulan'] == widget.bulan && e['tahun'] == widget.tahun)
+          .map((e) => {
+                'date': e['date'],
+                'name': e['note'],
+                'amount': e['amount'],
+              })
+          .toList();
+
+  // Uang Keluar = pembayaran pelanggan + operasional digabung
+  List<Map<String, dynamic>> get _currentList =>
+      _selectedTab == 0 ? _uangMasuk : [..._uangKeluar, ..._operasional];
 
   @override
   Widget build(BuildContext context) {
@@ -48,14 +60,14 @@ class _DetailRekapitulasiPageState extends State<DetailRekapitulasiPage> {
           ),
         ),
         title: Text(
-          'Detail Rekapitulasi',
+          'Detail - ${widget.bulan} ${widget.tahun}',
           style: medium16.copyWith(color: blue1),
         ),
         centerTitle: true,
       ),
       body: Column(
         children: [
-          /// ===== TAB BAR (sticky) =====
+          /// ===== TAB BAR =====
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
             child: RecapTab(
@@ -66,20 +78,29 @@ class _DetailRekapitulasiPageState extends State<DetailRekapitulasiPage> {
           ),
           const SizedBox(height: 16),
 
-          /// ===== LIST CARD (scrollable) =====
+          /// ===== LIST CARD =====
           Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              itemCount: _currentList.length,
-              itemBuilder: (context, index) {
-                final item = _currentList[index];
-                return RekapDetailCard(
-                  date: item['date']!,
-                  name: item['name']!,
-                  amount: item['amount']!,
-                );
-              },
-            ),
+            child: _currentList.isEmpty
+                ? Center(
+                    child: Text(
+                      'Tidak ada data',
+                      style: regular12.copyWith(color: Colors.grey),
+                    ),
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    itemCount: _currentList.length,
+                    itemBuilder: (context, index) {
+                      final item = _currentList[index];
+                      return RekapDetailCard(
+                        date: item['date'] as String,
+                        name: item['name'] as String,
+                        amount: TransaksiRepository.formatRupiah(
+                          item['amount'] as num,
+                        ),
+                      );
+                    },
+                  ),
           ),
         ],
       ),

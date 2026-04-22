@@ -5,7 +5,8 @@ import '../theme.dart';
 class MitraScheduleCard extends StatelessWidget {
   final String time;
   final String date;
-  final String? name;       // tambah parameter name
+  final String? name;       
+  final String? jenisSampah;
   final double weight;
   final VoidCallback? onTap;
 
@@ -14,6 +15,7 @@ class MitraScheduleCard extends StatelessWidget {
     required this.time,
     required this.date,
     this.name,
+    this.jenisSampah,
     required this.weight,
     this.onTap,
   });

@@ -29,6 +29,7 @@ class _DetailScheduleMasyarakatPageState
 
   late TextEditingController namaC;
   late TextEditingController kecamatanC;
+  late TextEditingController alamatC;
   late TextEditingController tanggalC;
   late TextEditingController jadwalC;
   late TextEditingController statusC;
@@ -46,6 +47,7 @@ class _DetailScheduleMasyarakatPageState
 
     namaC = TextEditingController(text: widget.schedule.name);
     kecamatanC = TextEditingController(text: widget.schedule.kecamatan);
+    alamatC = TextEditingController(text: widget.schedule.alamat);
     tanggalC = TextEditingController(text: widget.schedule.tanggal);
     jadwalC = TextEditingController(text: widget.schedule.jadwal);
     statusC = TextEditingController(text: widget.schedule.status);
@@ -64,6 +66,7 @@ class _DetailScheduleMasyarakatPageState
   void dispose() {
     namaC.dispose();
     kecamatanC.dispose();
+    alamatC.dispose();
     tanggalC.dispose();
     jadwalC.dispose();
     statusC.dispose();
@@ -151,6 +154,17 @@ class _DetailScheduleMasyarakatPageState
                       ),
 
                       const SizedBox(height: 16),
+
+                      /// ALAMAT
+                      AppInput(
+                        label: "Alamat",
+                        hint: "",
+                        controller: alamatC,
+                        readOnly: true,
+                      ),
+
+                      const SizedBox(height: 16),
+
 
                       /// TANGGAL
                       AppInput(

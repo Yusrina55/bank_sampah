@@ -7,12 +7,16 @@ import '../../../widgets/app_back_button.dart';
 class DetailTransaksiJadwal extends StatefulWidget {
   final String time;
   final String date;
+  final String? name;
+  final String? jenisSampah;
   final double weight;
   final double? harga;
 
   const DetailTransaksiJadwal({
     super.key,
     required this.time,
+    this.name,
+    this.jenisSampah,
     required this.date,
     required this.weight,
     this.harga,
@@ -28,6 +32,8 @@ class _DetailTransaksiJadwalState extends State<DetailTransaksiJadwal> {
 
   late TextEditingController dateController;
   late TextEditingController timeController;
+  late TextEditingController nameController;
+  late TextEditingController jenisSampahController;
   late TextEditingController weightController;
   late TextEditingController statusController;
   late TextEditingController hargaController;
@@ -42,12 +48,17 @@ class _DetailTransaksiJadwalState extends State<DetailTransaksiJadwal> {
     timeController =
         TextEditingController(text: widget.time);
 
+    nameController = TextEditingController(text: widget.name);
+
+    jenisSampahController =
+        TextEditingController(text: widget.jenisSampah);
+
     weightController = TextEditingController(
       text: "${widget.weight.toStringAsFixed(0)} kg",
     );
 
     statusController =
-        TextEditingController(text: "Menunggu Pembayaran");
+        TextEditingController(text: "Diproses");
 
     hargaController = TextEditingController(
       text: widget.harga != null
@@ -60,6 +71,8 @@ class _DetailTransaksiJadwalState extends State<DetailTransaksiJadwal> {
   void dispose() {
     dateController.dispose();
     timeController.dispose();
+    nameController.dispose();
+    jenisSampahController.dispose();
     weightController.dispose();
     statusController.dispose();
     hargaController.dispose();
@@ -93,6 +106,24 @@ class _DetailTransaksiJadwalState extends State<DetailTransaksiJadwal> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+
+            AppInput(
+              label: "Jenis Sampah",
+              hint: "",
+              controller: jenisSampahController,
+              readOnly: true,
+            ),
+            
+            const SizedBox(height: 16),
+
+            AppInput(
+              label: "Nama Mitra",
+              hint: "",
+              controller: nameController,
+              readOnly: true,
+            ),
+            
+            const SizedBox(height: 16),
 
             AppInput(
               label: "Tanggal",

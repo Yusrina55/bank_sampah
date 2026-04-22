@@ -30,17 +30,30 @@ class _HomePageMitraState extends State<HomePageMitra> {
     MitraScheduleModel(
       time: "12.00",
       date: "11/12/2025",
-      weight: 50,
+      weight: 50.5,
       harga: 150000,
     ),
     MitraScheduleModel(
       time: "13.00",
       date: "06/12/2025",
-      weight: 50,
+      weight: 50.0,
       harga: 250000,
     ),
   ];
-  
+
+  // ✅ Getter untuk menghitung total harga dari semua riwayat
+  int get totalBalance {
+    return riwayatPengambilan.fold<int>(0, (sum, item) => sum + (item.harga ?? 0).toInt());
+  }
+
+  // ✅ Format angka menjadi "400.000" (format Indonesia)
+  String get formattedBalance {
+    final formatted = totalBalance.toString().replaceAllMapped(
+      RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
+      (match) => '${match[1]}.',
+    );
+    return formatted;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -107,21 +120,18 @@ class _HomePageMitraState extends State<HomePageMitra> {
                           ),
                         ),
                       ),
-
                     ],
-                    )
+                  )
                 ],
               ),
 
               const SizedBox(height: 16),
 
-              
-              // BLUE BALANCE CARD
+              // ✅ Balance sekarang dihitung otomatis
               BlueBalanceCard(
-                balance: "1.200.000",
+                balance: formattedBalance,
               ),
 
-              
               const SizedBox(height: 24),
 
               /// ===== JADWAL PENGAJUAN =====
@@ -151,7 +161,6 @@ class _HomePageMitraState extends State<HomePageMitra> {
                   },
                 )
               ),
-
 
               const SizedBox(height: 16),
 
@@ -183,7 +192,6 @@ class _HomePageMitraState extends State<HomePageMitra> {
                   },
                 )
               ),
-
 
             ],
           ),

@@ -19,6 +19,7 @@ class PickupSchedule extends StatelessWidget {
       const ScheduleModel(
         name: "Rina",
         kecamatan: "Tegalgede",
+        alamat: "Perum Kaliurang N11",
         tanggal: "21/12/2025",
         jadwal: "09.00 - 10.00",
         status: "Menunggu",
@@ -30,6 +31,7 @@ class PickupSchedule extends StatelessWidget {
       const ScheduleModel(
         name: "Budi",
         kecamatan: "Sumbersari",
+        alamat: "Jl. Sumbersari No. 5",
         tanggal: "22/12/2025",
         jadwal: "10.00",
         status: "Menunggu",
@@ -71,7 +73,7 @@ class PickupSchedule extends StatelessWidget {
             time: schedule.jadwal,
             date: schedule.tanggal,
             name: schedule.name,
-            location: schedule.kecamatan,
+            location: '${schedule.kecamatan}, ${schedule.alamat}',
             onTap: () {
               /// routing berdasarkan tipe customer
               if (schedule.customerType ==

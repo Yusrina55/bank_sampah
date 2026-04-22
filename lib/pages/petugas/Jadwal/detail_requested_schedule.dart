@@ -22,6 +22,7 @@ class DetailRequestedSchedulePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final namaC = TextEditingController(text: schedule.name);
     final kecamatanC = TextEditingController(text: schedule.kecamatan);
+    final alamatC = TextEditingController(text: schedule.alamat);
     final tanggalC = TextEditingController(text: schedule.tanggal);
     final jadwalC = TextEditingController(text: schedule.jadwal);
     final statusC = TextEditingController(text: schedule.status);
@@ -76,6 +77,15 @@ class DetailRequestedSchedulePage extends StatelessWidget {
 
                     AppKecamatanDropdown(
                       controller: kecamatanC,
+                      readOnly: true,
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    AppInput(
+                      label: "Alamat",
+                      hint: "",
+                      controller: alamatC,
                       readOnly: true,
                     ),
 

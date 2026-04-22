@@ -34,9 +34,23 @@ class _MitraPageState extends State<MitraPage> {
   ];
 
   static final List<Map<String, dynamic>> dummyJadwalDiajukan = [
-    {'time': '10.00', 'date': '20/12/2025', 'name': 'Pabrik Besi', 'weight': 50.0},
-    {'time': '10.00', 'date': '20/12/2025', 'name': 'Pabrik Plastik A', 'weight': 35.0},
-  ];
+  {
+    'time': '10.00',
+    'date': '20/12/2025',
+    'name': 'Pabrik Besi',
+    'weight': 50.0,
+    'status': 'Ditolak',                                    // ✅
+    'alasanTolak': 'Kapasitas gudang penuh minggu ini',     // ✅
+  },
+  {
+    'time': '10.00',
+    'date': '20/12/2025',
+    'name': 'Pabrik Plastik A',
+    'weight': 35.0,
+    'status': 'Diproses',                                   // ✅
+    'alasanTolak': null,                                    // ✅
+  },
+];
 
   // ===== DUMMY DATA TAB 2 =====
   static final List<Map<String, dynamic>> dummyDaftarMitra = [
@@ -134,6 +148,7 @@ class _MitraPageState extends State<MitraPage> {
             time: item['time'],
             date: item['date'],
             name: item['name'],
+            jenisSampah: item['jenisSampah'], 
             weight: item['weight'],
             onTap: () => Navigator.push(
               context,
@@ -144,6 +159,7 @@ class _MitraPageState extends State<MitraPage> {
                   namaMitra: item['name'],
                   berat: '${item['weight'].toStringAsFixed(0)} karung',
                   jadwalAmbil: item['date'],
+                  time: item['time'],
                   status: 'Setuju',
                   harga: '100.000',
                 ),
@@ -179,6 +195,7 @@ class _MitraPageState extends State<MitraPage> {
             time: item['time'],
             date: item['date'],
             name: item['name'],
+            jenisSampah: item['jenisSampah'],
             weight: item['weight'],
             onTap: () => Navigator.push(
               context,
@@ -189,7 +206,9 @@ class _MitraPageState extends State<MitraPage> {
                   namaMitra: item['name'],
                   berat: '${item['weight'].toStringAsFixed(0)} karung',
                   jadwalAmbil: item['date'],
-                  status: 'Diproses',
+                  time: item['time'],
+                  status: item['status'] ?? 'Menunggu Persetujuan',          
+                  alasanTolak: item['alasanTolak'],           
                 ),
               ),
             ),
@@ -206,6 +225,7 @@ class _MitraPageState extends State<MitraPage> {
             time: item['time'],
             date: item['date'],
             name: item['name'],
+            jenisSampah: item['jenisSampah'],  // tambahkan jenisSampah
             weight: item['weight'],
             onTap: () => Navigator.push(
               context,
@@ -216,6 +236,7 @@ class _MitraPageState extends State<MitraPage> {
                   namaMitra: item['name'],
                   berat: '${item['weight'].toStringAsFixed(0)} karung',
                   jadwalAmbil: item['date'],
+                  time: item['time'],
                   status: 'Selesai',
                   harga: '100.000',
                 ),

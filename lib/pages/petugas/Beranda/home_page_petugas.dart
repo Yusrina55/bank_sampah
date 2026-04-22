@@ -25,7 +25,8 @@ class _HomePetugasPageState extends State<HomePetugasPage> {
       'date': '21/12/2025',
       'name': 'Rina',
       'jenisSampah': 'Plastik',
-      'location': 'Kecamatan Tegalgede, Perum Kaliurang N11',
+      'kecamatan': 'Tegalgede',   // ✅ pisah
+      'alamat': 'Perum Kaliurang N11', 
     },
     {
       'time': '12.00',
@@ -33,7 +34,8 @@ class _HomePetugasPageState extends State<HomePetugasPage> {
       'name': 'Budi',
       'jenisSampah': 'Kertas',
       'berat': '3 kg',
-      'location': 'Kecamatan Tegalgede, Perum Kaliurang N11',
+      'kecamatan': 'Tegalgede',   // ✅ pisah
+      'alamat': 'Perum Kaliurang N11', 
     },
   ];
 
@@ -42,10 +44,11 @@ class _HomePetugasPageState extends State<HomePetugasPage> {
 
     final schedule = ScheduleModel(
       name: item['name']!,
-      kecamatan: item['location']!,
+      kecamatan: item['kecamatan']!,
+      alamat: item['alamat']!,
       tanggal: item['date']!,
       jadwal: item['time']!,
-      status: 'Disetujui',
+      status: 'Dijemput',
       customerType: isRentang ? CustomerType.mahasiswa : CustomerType.masyarakat,
       sampahList: isRentang
           ? [
@@ -100,7 +103,7 @@ class _HomePetugasPageState extends State<HomePetugasPage> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      "Pabrik Kertas A",
+                      "Petugas Abang Recycle",
                       style: semiBold14.copyWith(color: blue1),
                     ),
                   ],
@@ -161,14 +164,14 @@ class _HomePetugasPageState extends State<HomePetugasPage> {
                     children: const [
                       Expanded(
                         child: SummaryCard(
-                          title: "Jadwal Mahasiswa",
+                          title: "Mahasiswa",
                           total: "12",
                         ),
                       ),
                       SizedBox(width: 12),
                       Expanded(
                         child: SummaryCard(
-                          title: "Jadwal Warga dan Usaha",
+                          title: "Warga dan Usaha",
                           total: "32",
                         ),
                       ),
@@ -197,7 +200,7 @@ class _HomePetugasPageState extends State<HomePetugasPage> {
                         time: item['time']!,
                         date: item['date']!,
                         name: item['name']!,
-                        location: item['location']!,
+                        location: '${item['kecamatan']}, ${item['alamat']}',
                         onTap: () => _onCardTap(item),
                       ),
                     ),

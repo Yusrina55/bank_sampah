@@ -30,6 +30,8 @@ class MitraScheduleSection extends StatelessWidget {
           return MitraScheduleCard(
             time: item["time"],
             date: item["date"],
+            name: item["name"] ,
+            jenisSampah: item["jenisSampah"],
             weight: item["weight"],
             onTap: () {
               Navigator.push(
@@ -38,6 +40,8 @@ class MitraScheduleSection extends StatelessWidget {
                   builder: (_) => DetailTransaksiJadwal(
                     time: item["time"],
                     date: item["date"],
+                    name: item["name"],
+                    jenisSampah: item["jenisSampah"],
                     weight: item["weight"],
                   ),
                 ),

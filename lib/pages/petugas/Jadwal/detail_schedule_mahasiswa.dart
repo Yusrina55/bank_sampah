@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../../widgets/app_input.dart';
 import '../../../widgets/app_button.dart';
 import '../../../widgets/app_back_button.dart';
@@ -30,6 +31,7 @@ class _DetailScheduleMahasiswaPageState
 
   late TextEditingController namaC;
   late TextEditingController kecamatanC;
+  late TextEditingController alamatC;
   late TextEditingController tanggalC;
   late TextEditingController jadwalC;
   late TextEditingController statusC;
@@ -51,6 +53,7 @@ class _DetailScheduleMahasiswaPageState
 
     namaC = TextEditingController(text: widget.schedule.name);
     kecamatanC = TextEditingController(text: widget.schedule.kecamatan);
+    alamatC = TextEditingController(text: widget.schedule.alamat);
     tanggalC = TextEditingController(text: widget.schedule.tanggal);
     jadwalC = TextEditingController(text: widget.schedule.jadwal);
     statusC = TextEditingController(text: widget.schedule.status);
@@ -66,6 +69,7 @@ class _DetailScheduleMahasiswaPageState
   void dispose() {
     namaC.dispose();
     kecamatanC.dispose();
+    alamatC.dispose();
     tanggalC.dispose();
     jadwalC.dispose();
     statusC.dispose();
@@ -87,9 +91,9 @@ class _DetailScheduleMahasiswaPageState
           return;
         }
 
-        // TODO: logic pembayaran mahasiswa
-        // contoh:
-        // Navigator.push(context, MaterialPageRoute(...));
+        // ✅ Tutup keyboard dulu, lalu back
+        FocusScope.of(context).unfocus();
+        Navigator.pop(context);
       },
     );
   }
@@ -149,6 +153,16 @@ class _DetailScheduleMahasiswaPageState
 
                       const SizedBox(height: 16),
 
+                      /// ALAMAT
+                      AppInput(
+                        label: "Alamat",
+                        hint: "",
+                        controller: alamatC,
+                        readOnly: true,
+                      ),
+
+                      const SizedBox(height: 16),
+
                       /// TANGGAL
                       AppInput(
                         label: "Tanggal",
@@ -193,6 +207,10 @@ class _DetailScheduleMahasiswaPageState
                         hint: "Masukkan harga",
                         controller: hargaC,
                         readOnly: false,
+                        keyboardType: TextInputType.number,          // ✅ keyboard angka
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,    // ✅ hanya angka, no huruf/simbol
+                        ],
                       ),
 
                       const SizedBox(height: 32),

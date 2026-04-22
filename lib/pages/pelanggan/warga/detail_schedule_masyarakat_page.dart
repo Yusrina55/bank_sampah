@@ -39,9 +39,14 @@ class _DetailScheduleMasyarakatPageState
   late TextEditingController jadwalC;
   late TextEditingController statusC;
   late TextEditingController hargaC;
+  late TextEditingController alasanTolakC;
 
   late List<TextEditingController> jenisControllers;
   late List<TextEditingController> jumlahControllers;
+
+
+  // ✅ cek apakah status ditolak
+  bool get isDitolak => widget.schedule.status == "Ditolak";
 
   Future<void> _pickTime() async {
     final TimeOfDay? picked = await showTimePicker(
@@ -105,6 +110,10 @@ class _DetailScheduleMasyarakatPageState
         TextEditingController(text: widget.schedule.status);
     hargaC =
         TextEditingController(text: widget.schedule.harga ?? "");
+    alasanTolakC = TextEditingController(
+      text: widget.schedule.alasanTolak ?? "",
+    );
+
 
     jenisControllers = widget.schedule.sampahList
         .map((e) => TextEditingController(text: e.jenis))
@@ -141,6 +150,7 @@ class _DetailScheduleMasyarakatPageState
     jadwalC.dispose();
     statusC.dispose();
     hargaC.dispose();
+    alasanTolakC.dispose();
 
     for (var c in jenisControllers) {
       c.dispose();
@@ -155,6 +165,9 @@ class _DetailScheduleMasyarakatPageState
   // ================= BUTTON SECTION =================
 
   Widget buildBottomButton() {
+
+    // ✅ Jika ditolak, sembunyikan semua button (hanya tampil back button di header)
+    if (isDitolak) return const SizedBox.shrink();
 
     /// HISTORY MODE (FULL READ ONLY)
     if (widget.isHistory) {
@@ -318,7 +331,7 @@ class _DetailScheduleMasyarakatPageState
                         label: "Ajuan Jadwal",
                         hint: "",
                         controller: jadwalC,
-                        readOnly: true, // selalu true supaya tidak bisa ketik
+                        readOnly: true, 
                         suffixIcon: (!isReadOnly)
                             ? const Icon(Icons.access_time)
                             : null,
@@ -344,7 +357,7 @@ class _DetailScheduleMasyarakatPageState
                             jenisController: jenisControllers[index],
                             jumlahController: jumlahControllers[index],
                             showDelete: !isReadOnly,
-                            readOnly: isReadOnly, // ✅ TAMBAHAN
+                            readOnly: isReadOnly,
                             onDelete: isReadOnly
                                 ? null
                                 : () {
@@ -368,7 +381,18 @@ class _DetailScheduleMasyarakatPageState
                         readOnly: true,
                       ),
 
-                      const SizedBox(height: 16),
+                      // ✅ ALASAN TOLAK — hanya tampil jika status Ditolak
+                      if (isDitolak) ...[
+                        const SizedBox(height: 16),
+                        AppInput(
+                          label: "Alasan Penolakan",
+                          hint: "",
+                          controller: alasanTolakC,
+                          readOnly: true,
+                        ),
+                      ],
+
+                      const SizedBox(height: 32),
 
                       /// HARGA
                       if (widget.isHistory) ...[

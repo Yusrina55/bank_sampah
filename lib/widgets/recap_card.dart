@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../theme.dart';
-import '../pages/petugas/Transaksi/rekapitulasi/detail_recap_page.dart';
 
 class RekapCard extends StatelessWidget {
-  final String periode; // e.g. "2025, Desember"
-  final String total;   // e.g. "700.000,00"
+  final String periode;
+  final String total;
   final VoidCallback? onTap;
 
   const RekapCard({
@@ -18,12 +17,7 @@ class RekapCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const DetailRekapitulasiPage()),
-        );
-      },
+      onTap: onTap, // ✅ gunakan onTap dari parent, bukan hardcode navigate
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
