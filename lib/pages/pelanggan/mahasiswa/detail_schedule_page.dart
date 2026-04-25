@@ -13,13 +13,11 @@ enum DetailMode { view, edit }
 
 class DetailSchedulePage extends StatefulWidget {
   final ScheduleModel schedule;
-  final bool isHistory;
   final VoidCallback onBack;
 
   const DetailSchedulePage({
     super.key,
     required this.schedule,
-    required this.isHistory,
     required this.onBack,
   });
 
@@ -69,9 +67,9 @@ class _DetailScheduleMahasiswaPageState
     );
   }
 
-  bool get isReadOnly =>
-      widget.isHistory || mode == DetailMode.view;
-  
+  bool get isReadOnly => widget.schedule.status == 'Dibayar' || mode == DetailMode.view;
+  bool get isHidden => widget.schedule.status == "Ditolak" || widget.schedule.status == "Selesai" || widget.schedule.status == "Dibatalkan";
+
   /// ===== BOTTOM SHEET CANCEL =====
   void _showCancelBottomSheet() {
     showModalBottomSheet(
@@ -204,7 +202,7 @@ class _DetailScheduleMahasiswaPageState
                       readOnly: true,
                     ),
 
-                    if (widget.isHistory) ...[
+                    if (widget.schedule.status == 'Dibayar' || widget.schedule.status == 'Selesai') ...[
                       const SizedBox(height: 16),
                       AppInput(
                         label: "Harga",
@@ -218,7 +216,9 @@ class _DetailScheduleMahasiswaPageState
               ),
 
               /// BUTTON
-              if (widget.isHistory)
+              if(isHidden)
+               const SizedBox.shrink()
+              else if (widget.schedule.status == 'Dibayar')
                 Row(
                   children: [
                     Expanded(
@@ -239,7 +239,7 @@ class _DetailScheduleMahasiswaPageState
                 )
 
                /// ✅ VIEW MODE (SUDAH ADA BATALKAN)
-              else if (mode == DetailMode.view)
+              else if (widget.schedule.status == 'Diproses')
                 Row(
                   children: [
                     Expanded(

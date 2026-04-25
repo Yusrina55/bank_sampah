@@ -37,19 +37,6 @@ class _HomePagePelangganState extends State<HomePagePelanggan> {
         SampahItem(jenis: "Plastik", berat: "10 kg"),
       ],
     ),
-    ScheduleModel(
-      name: "Sari",
-      kecamatan: "Sumbersari",
-      alamat: "Jl. Mawar No.5, Sumbersari",
-      tanggal: "21/12/2025",
-      jadwal: "11.00",
-      status: "Ditolak",
-      alasanTolak: "sedang sakit",
-      customerType: CustomerType.masyarakat,
-      sampahList: [
-        SampahItem(jenis: "Plastik", berat: "12 kg"),
-      ],
-    ),
   ];
 
   // ===== JADWAL PENJEMPUTAN (mahasiswa langsung masuk sini) =====
@@ -67,12 +54,25 @@ class _HomePagePelangganState extends State<HomePagePelanggan> {
       ],
     ),
     ScheduleModel(
+      name: "Rina Warga",
+      kecamatan: "Tegalgede",
+      alamat: "Perum Kaliurang N11",
+      tanggal: "13/12/2025",
+      jadwal: "08.00 - 10.00",
+      status: "Diproses",
+      customerType: CustomerType.mahasiswa,
+      sampahList: [
+        SampahItem(jenis: "Kertas"),
+      ],
+    ),
+    ScheduleModel(
       name: "Rina",
       kecamatan: "Tegalgede",
       alamat: "Perum Kaliurang N11",
       tanggal: "21/12/2025",
       jadwal: "08.00 - 10.00",
-      status: "Diproses",
+      status: "Dibayar",
+      harga: "15.000",
       customerType: CustomerType.mahasiswa,
       sampahList: [
         SampahItem(jenis: "Plastik"),
@@ -83,25 +83,12 @@ class _HomePagePelangganState extends State<HomePagePelanggan> {
   // ===== RIWAYAT =====
   final List<ScheduleModel> riwayatList = const [
     ScheduleModel(
-      name: "Rina",
-      kecamatan: "Tegalgede",
-      alamat: "Perum Kaliurang N11",
-      tanggal: "21/12/2025",
-      jadwal: "08.00 - 10.00",
-      status: "Dijemput",
-      harga: "15.000",
-      customerType: CustomerType.mahasiswa,
-      sampahList: [
-        SampahItem(jenis: "Plastik"),
-      ],
-    ),
-    ScheduleModel(
       name: "Budi",
       kecamatan: "Sumbersari",
       alamat: "Jl. Mawar No.5, Sumbersari",
       tanggal: "20/01/2026",
       jadwal: "09.00",
-      status: "Dijemput",
+      status: "Dibatalkan",
       harga: "100.000",
       customerType: CustomerType.masyarakat,
       sampahList: [
@@ -115,7 +102,7 @@ class _HomePagePelangganState extends State<HomePagePelanggan> {
       alamat: "Perum Kaliurang N11",
       tanggal: "21/12/2025",
       jadwal: "08.00 - 10.00",
-      status: "Dijemput",
+      status: "Selesai",
       harga: "20.000",
       customerType: CustomerType.mahasiswa,
       sampahList: [
@@ -128,11 +115,24 @@ class _HomePagePelangganState extends State<HomePagePelanggan> {
       alamat: "Perum Kaliurang N11",
       tanggal: "21/12/2025",
       jadwal: "08.00 - 10.00",
-      status: "Dijemput",
+      status: "Selesai",
       harga: "30.000",
       customerType: CustomerType.mahasiswa,
       sampahList: [
         SampahItem(jenis: "Kertas"),
+      ],
+    ),
+        ScheduleModel(
+      name: "Sari",
+      kecamatan: "Sumbersari",
+      alamat: "Jl. Mawar No.5, Sumbersari",
+      tanggal: "21/12/2025",
+      jadwal: "11.00",
+      status: "Ditolak",
+      alasanTolak: "sedang sakit",
+      customerType: CustomerType.masyarakat,
+      sampahList: [
+        SampahItem(jenis: "Plastik", berat: "12 kg"),
       ],
     ),
   ];
@@ -175,13 +175,11 @@ class _HomePagePelangganState extends State<HomePagePelanggan> {
       if (_selectedSchedule!.customerType == CustomerType.mahasiswa) {
         return DetailSchedulePage(
           schedule: _selectedSchedule!,
-          isHistory: riwayatList.contains(_selectedSchedule),
           onBack: _onBack,
         );
       } else {
         return DetailScheduleMasyarakatPage(
           schedule: _selectedSchedule!,
-          isHistory: riwayatList.contains(_selectedSchedule),
           onBack: _onBack,
         );
       }

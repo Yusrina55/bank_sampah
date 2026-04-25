@@ -22,7 +22,7 @@ class PickupSchedule extends StatelessWidget {
         alamat: "Perum Kaliurang N11",
         tanggal: "21/12/2025",
         jadwal: "09.00 - 10.00",
-        status: "Menunggu",
+        status: "Diproses",
         customerType: CustomerType.mahasiswa,
         sampahList: [
           SampahItem(jenis: "Plastik"),
@@ -34,7 +34,7 @@ class PickupSchedule extends StatelessWidget {
         alamat: "Jl. Sumbersari No. 5",
         tanggal: "22/12/2025",
         jadwal: "10.00",
-        status: "Menunggu",
+        status: "Diproses",
         customerType: CustomerType.masyarakat,
         sampahList: [
           SampahItem(jenis: "Kertas", berat: "2 kg"),

@@ -10,6 +10,7 @@ class DetailRiwayatMitra extends StatefulWidget {
   final double weight;
   final String status;
   final double? harga;
+  final String? alasanTolak;
 
   const DetailRiwayatMitra({
     super.key,
@@ -18,6 +19,7 @@ class DetailRiwayatMitra extends StatefulWidget {
     required this.weight,
     required this.status,
     this.harga,
+    this.alasanTolak,
   });
 
   @override
@@ -33,6 +35,7 @@ class _DetailRiwayatMitraState
   late TextEditingController weightController;
   late TextEditingController statusController;
   late TextEditingController hargaController;
+  late TextEditingController alasanTolakController;
 
   @override
   void initState() {
@@ -50,11 +53,14 @@ class _DetailRiwayatMitraState
     statusController =
         TextEditingController(text: widget.status);
 
+    alasanTolakController = TextEditingController(
+      text: widget.alasanTolak ?? "-",
+    );
+
     hargaController = TextEditingController(
       text: widget.harga != null
           ? "Rp ${widget.harga!.toStringAsFixed(0)}"
-          : "-",
-);
+          : "-", );
   }
 
   @override
@@ -64,8 +70,19 @@ class _DetailRiwayatMitraState
     weightController.dispose();
     statusController.dispose();
     hargaController.dispose();
+    alasanTolakController.dispose();
     super.dispose();
   }
+
+  bool get showHarga =>
+      widget.status == "Dibayar" ||
+      widget.status == "Selesai";
+
+  bool get showAlasanTolak =>
+      widget.status == "Ditolak";
+
+  bool get showButton =>
+      widget.status == "Dibayar";
 
   @override
   Widget build(BuildContext context) {
@@ -125,37 +142,51 @@ class _DetailRiwayatMitraState
 
             const SizedBox(height: 16),
 
-            AppInput(
-              label: "Harga",
-              hint: "",
-              controller: hargaController,
-              readOnly: true,
-            ),
+            if (showAlasanTolak) ...[
+              const SizedBox(height: 16),
+              AppInput(
+                label: "Alasan Penolakan",
+                hint: "",
+                controller: alasanTolakController,
+                readOnly: true,
+              ),
+              const Spacer(),
+            ],
 
-            const Spacer(),
+            if (showHarga) ...[
+              const SizedBox(height: 16),
+              AppInput(
+                label: "Harga",
+                hint: "",
+                controller: hargaController,
+                readOnly: true,
+              ),
+              const Spacer(),
+            ],
 
-            Row(
-              children: [
-                Expanded(
-                  child: AppButton(
-                    text: "Tidak",
-                    isOutlined: true,
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
+            if (showButton)
+              Row(
+                children: [
+                  Expanded(
+                    child: AppButton(
+                      text: "Tidak",
+                      isOutlined: true,
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
                   ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: AppButton(
-                    text: "Sesuai",
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: AppButton(
+                      text: "Sesuai",
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
                   ),
-                ),
-              ],
-            )
+                ],
+              ),
           ],
         ),
       ),

@@ -23,8 +23,18 @@ class _HomePageMitraState extends State<HomePageMitra> {
       time: "10.00",
       date: "20/12/2025",
       weight: 50,
+      status: "Menunggu Persetujuan",
     ),
   ];
+
+  final List<MitraScheduleModel> jadwalDisetujui = const [
+  MitraScheduleModel(
+    time: "11.00",
+    date: "22/12/2025",
+    weight: 40,
+    status: "Disetujui",
+  ),
+];
 
   final List<MitraScheduleModel> riwayatPengambilan = const [
     MitraScheduleModel(
@@ -32,18 +42,39 @@ class _HomePageMitraState extends State<HomePageMitra> {
       date: "11/12/2025",
       weight: 50.5,
       harga: 150000,
+      status: "Dibayar",
     ),
     MitraScheduleModel(
       time: "13.00",
       date: "06/12/2025",
       weight: 50.0,
       harga: 250000,
+      status: "Selesai",
+    ),
+    // ditolak
+    MitraScheduleModel(
+      time: "09.00",
+      date: "04/12/2025",
+      weight: 30.0,
+      status: "Ditolak",
+      alasanTolak: "Kapasitas gudang penuh",
+    ),
+
+    // dibatalkan
+    MitraScheduleModel(
+      time: "15.00",
+      date: "02/12/2025",
+      weight: 20.0,
+      status: "Dibatalkan",
     ),
   ];
 
   // ✅ Getter untuk menghitung total harga dari semua riwayat
   int get totalBalance {
-    return riwayatPengambilan.fold<int>(0, (sum, item) => sum + (item.harga ?? 0).toInt());
+    return riwayatPengambilan.fold<int>(
+      0,
+      (sum, item) => sum + ((item.harga ?? 0) as num).toInt(),
+    );
   }
 
   // ✅ Format angka menjadi "400.000" (format Indonesia)
@@ -155,11 +186,43 @@ class _HomePageMitraState extends State<HomePageMitra> {
                           date: item.date,
                           weight: item.weight,
                           harga: item.harga,
+                          status: item.status,
                         ),
                       ),
                     );
                   },
                 )
+              ),
+
+              const SizedBox(height: 16),
+
+              /// ===== JADWAL DISETUJUI =====
+              Text(
+                "Jadwal Disetujui",
+                style: semiBold12.copyWith(color: textblack),
+              ),
+              const SizedBox(height: 12),
+
+              ...jadwalDisetujui.map(
+                (item) => MitraScheduleCard(
+                  time: item.time,
+                  date: item.date,
+                  weight: item.weight,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => DetailJadwalMitraPage(
+                          time: item.time,
+                          date: item.date,
+                          weight: item.weight,
+                          harga: item.harga,
+                          status: item.status,
+                        ),
+                      ),
+                    );
+                  },
+                ),
               ),
 
               const SizedBox(height: 16),
@@ -180,12 +243,13 @@ class _HomePageMitraState extends State<HomePageMitra> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => DetailRiwayatMitra(
+                        builder: (_) => DetailRiwayatMitra(
                           date: item.date,
                           time: item.time,
                           weight: item.weight,
-                          status: "Selesai",
+                          status: item.status,
                           harga: item.harga,
+                          alasanTolak: item.alasanTolak,
                         ),
                       ),
                     );

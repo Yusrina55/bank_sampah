@@ -12,13 +12,11 @@ enum DetailMode { view, edit }
 
 class DetailScheduleMasyarakatPage extends StatefulWidget {
   final ScheduleModel schedule;
-  final bool isHistory;
   final VoidCallback onBack;
 
   const DetailScheduleMasyarakatPage({
     super.key,
     required this.schedule,
-    required this.isHistory,
     required this.onBack,
   });
 
@@ -46,7 +44,7 @@ class _DetailScheduleMasyarakatPageState
 
 
   // ✅ cek apakah status ditolak
-  bool get isDitolak => widget.schedule.status == "Ditolak";
+  bool get isHidden => widget.schedule.status == "Ditolak" || widget.schedule.status == "Selesai" || widget.schedule.status == "Dibatalkan";
 
   Future<void> _pickTime() async {
     final TimeOfDay? picked = await showTimePicker(
@@ -109,7 +107,7 @@ class _DetailScheduleMasyarakatPageState
     statusC =
         TextEditingController(text: widget.schedule.status);
     hargaC =
-        TextEditingController(text: widget.schedule.harga ?? "");
+        TextEditingController(text: widget.schedule.harga ?? "-");
     alasanTolakC = TextEditingController(
       text: widget.schedule.alasanTolak ?? "",
     );
@@ -124,8 +122,7 @@ class _DetailScheduleMasyarakatPageState
         .toList();
   }
 
-  bool get isReadOnly =>
-      widget.isHistory || mode == DetailMode.view;
+  bool get isReadOnly => widget.schedule.status == 'Dibayar' || mode == DetailMode.view;
   Future<void> _pickDate() async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -165,12 +162,12 @@ class _DetailScheduleMasyarakatPageState
   // ================= BUTTON SECTION =================
 
   Widget buildBottomButton() {
+    // status final -> hide button
+    if (isHidden) return const SizedBox.shrink();
 
-    // ✅ Jika ditolak, sembunyikan semua button (hanya tampil back button di header)
-    if (isDitolak) return const SizedBox.shrink();
-
-    /// HISTORY MODE (FULL READ ONLY)
-    if (widget.isHistory) {
+    // diproses / dibayar -> konfirmasi
+    if (widget.schedule.status == 'Diproses' ||
+        widget.schedule.status == 'Dibayar') {
       return Row(
         children: [
           Expanded(
@@ -191,24 +188,57 @@ class _DetailScheduleMasyarakatPageState
       );
     }
 
-    /// VIEW MODE
-    if (mode == DetailMode.view) {
+    // khusus ajuan -> cek mode
+    if (widget.schedule.status == 'Menunggu Persetujuan') {
+      // VIEW MODE
+      if (mode == DetailMode.view) {
+        return Row(
+          children: [
+            Expanded(
+              child: AppButton(
+                text: "Batalkan",
+                isOutlined: true,
+                onPressed: _showCancelBottomSheet,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: AppButton(
+                text: "Ubah",
+                onPressed: () {
+                  setState(() {
+                    mode = DetailMode.edit;
+                  });
+                },
+              ),
+            ),
+          ],
+        );
+      }
+
+      // EDIT MODE
       return Row(
         children: [
           Expanded(
             child: AppButton(
-              text: "Batalkan",
+              text: "Kembali",
               isOutlined: true,
-              onPressed: _showCancelBottomSheet,
+              onPressed: () {
+                setState(() {
+                  mode = DetailMode.view;
+                });
+              },
             ),
           ),
           const SizedBox(width: 16),
           Expanded(
             child: AppButton(
-              text: "Ubah",
+              text: "Simpan",
               onPressed: () {
+                /// TODO: call API update jadwal
+
                 setState(() {
-                  mode = DetailMode.edit;
+                  mode = DetailMode.view;
                 });
               },
             ),
@@ -217,33 +247,7 @@ class _DetailScheduleMasyarakatPageState
       );
     }
 
-    /// EDIT MODE
-    return Row(
-      children: [
-        Expanded(
-          child: AppButton(
-            text: "Kembali",
-            isOutlined: true,
-            onPressed: () {
-              setState(() {
-                mode = DetailMode.view;
-              });
-            },
-          ),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: AppButton(
-            text: "Simpan",
-            onPressed: () {
-              setState(() {
-                mode = DetailMode.view;
-              });
-            },
-          ),
-        ),
-      ],
-    );
+    return const SizedBox.shrink();
   }
 
   // ================= UI =================
@@ -382,7 +386,7 @@ class _DetailScheduleMasyarakatPageState
                       ),
 
                       // ✅ ALASAN TOLAK — hanya tampil jika status Ditolak
-                      if (isDitolak) ...[
+                      if (widget.schedule.status == 'Ditolak') ...[
                         const SizedBox(height: 16),
                         AppInput(
                           label: "Alasan Penolakan",
@@ -395,7 +399,7 @@ class _DetailScheduleMasyarakatPageState
                       const SizedBox(height: 32),
 
                       /// HARGA
-                      if (widget.isHistory) ...[
+                      if (widget.schedule.status == 'Dibayar' || widget.schedule.status == 'Selesai') ...[
                         const SizedBox(height: 16),
 
                         AppInput(

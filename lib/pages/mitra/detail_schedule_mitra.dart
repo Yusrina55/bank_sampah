@@ -12,6 +12,7 @@ class DetailJadwalMitraPage extends StatefulWidget {
   final String date;
   final double weight;
   final double? harga;
+  final String status;
 
   const DetailJadwalMitraPage({
     super.key,
@@ -19,6 +20,7 @@ class DetailJadwalMitraPage extends StatefulWidget {
     required this.date,
     required this.weight,
     this.harga,
+    required this.status,
   });
 
   @override
@@ -50,7 +52,7 @@ class _DetailJadwalMitraPageState
         text: "${widget.weight.toStringAsFixed(0)} kg");
 
     statusController =
-        TextEditingController(text: "Diproses");
+        TextEditingController(text: widget.status);
   }
 
   @override
@@ -146,33 +148,33 @@ class _DetailJadwalMitraPageState
 
             const Spacer(),
 
-            Row(
-              children: [
-                Expanded(
-                  child: AppButton(
-                    text: "Tolak",
-                    isOutlined: true,
-                    backgroundColor: blue2,
-                    onPressed: _showRejectBottomSheet, // ✅ pakai ini
+            if (widget.status == "Menunggu Persetujuan")
+              Row(
+                children: [
+                  Expanded(
+                    child: AppButton(
+                      text: "Tolak",
+                      isOutlined: true,
+                      backgroundColor: blue2,
+                      onPressed: _showRejectBottomSheet,
+                    ),
                   ),
-                ),
-
-                const SizedBox(width: 16),
-                Expanded(
-                  child: AppButton(
-                    text: "Setuju",
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => HomePageMitra(),
-                        ),
-                      );
-                    },
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: AppButton(
+                      text: "Setuju",
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const HomePageMitra(),
+                          ),
+                        );
+                      },
+                    ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
           ],
         ),
       ),

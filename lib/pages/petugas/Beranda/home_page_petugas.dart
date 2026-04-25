@@ -25,7 +25,7 @@ class _HomePetugasPageState extends State<HomePetugasPage> {
       'date': '21/12/2025',
       'name': 'Rina',
       'jenisSampah': 'Plastik',
-      'kecamatan': 'Tegalgede',   // ✅ pisah
+      'kecamatan': 'Tegalgede',   
       'alamat': 'Perum Kaliurang N11', 
     },
     {
@@ -34,7 +34,7 @@ class _HomePetugasPageState extends State<HomePetugasPage> {
       'name': 'Budi',
       'jenisSampah': 'Kertas',
       'berat': '3 kg',
-      'kecamatan': 'Tegalgede',   // ✅ pisah
+      'kecamatan': 'Tegalgede',  
       'alamat': 'Perum Kaliurang N11', 
     },
   ];
@@ -48,7 +48,7 @@ class _HomePetugasPageState extends State<HomePetugasPage> {
       alamat: item['alamat']!,
       tanggal: item['date']!,
       jadwal: item['time']!,
-      status: 'Dijemput',
+      status: 'Diproses',
       customerType: isRentang ? CustomerType.mahasiswa : CustomerType.masyarakat,
       sampahList: isRentang
           ? [

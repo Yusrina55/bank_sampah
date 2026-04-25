@@ -5,6 +5,8 @@ class MitraScheduleModel {
   final String? jenisSampah;  
   final double weight;
   final double? harga;
+  final String status;
+  final String? alasanTolak;
 
   const MitraScheduleModel({
     required this.time,
@@ -13,5 +15,7 @@ class MitraScheduleModel {
     this.jenisSampah,
     required this.weight,
     this.harga,
+    required this.status,
+    this.alasanTolak,
   });
 }

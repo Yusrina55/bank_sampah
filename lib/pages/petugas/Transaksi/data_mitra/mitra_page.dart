@@ -37,18 +37,10 @@ class _MitraPageState extends State<MitraPage> {
   {
     'time': '10.00',
     'date': '20/12/2025',
-    'name': 'Pabrik Besi',
-    'weight': 50.0,
-    'status': 'Ditolak',                                    // ✅
-    'alasanTolak': 'Kapasitas gudang penuh minggu ini',     // ✅
-  },
-  {
-    'time': '10.00',
-    'date': '20/12/2025',
     'name': 'Pabrik Plastik A',
     'weight': 35.0,
-    'status': 'Diproses',                                   // ✅
-    'alasanTolak': null,                                    // ✅
+    'status': 'Menunggu Persetujuan',                                   
+    'alasanTolak': null,                                   
   },
 ];
 
@@ -160,7 +152,7 @@ class _MitraPageState extends State<MitraPage> {
                   berat: '${item['weight'].toStringAsFixed(0)} karung',
                   jadwalAmbil: item['date'],
                   time: item['time'],
-                  status: 'Setuju',
+                  status: 'Diproses',
                   harga: '100.000',
                 ),
               ),
@@ -183,7 +175,6 @@ class _MitraPageState extends State<MitraPage> {
                     context,
                     MaterialPageRoute(builder: (_) => const CreateJadwalMitraPage()),
                   );
-                  // TODO: navigate to tambah jadwal
                 },
               ),
             ),
